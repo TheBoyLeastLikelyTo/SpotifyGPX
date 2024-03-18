@@ -88,14 +88,33 @@ public partial class OutputHandler
 
         public void Save(bool transform)
         {
-            if (Handler is not null)
+            int retryCount = 0;
+
+            while (retryCount < MaxRetries)
             {
-                Handler?.Save(GetUniqueFilePath(FinalName));
+                try
+                {
+                    Handler?.Save(GetUniqueFilePath(FinalName));
+
+                    if (transform && Handler is ITransformableOutput)
+                    {
+                        (Handler as ITransformableOutput)?.TransformAndSave(GetUniqueFilePath(FinalName), $"{Extension}.xslt");
+                    }
+
+                    break; // If save is successful, exit the loop
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error writing {FinalName}: {ex.Message}");
+                    Console.WriteLine($"Retrying in {RetryDelayMs / 1000} seconds...");
+                    System.Threading.Thread.Sleep(RetryDelayMs);
+                    retryCount++;
+                }
             }
 
-            if (transform && Handler is ITransformableOutput)
+            if (retryCount == MaxRetries)
             {
-                (Handler as ITransformableOutput)?.TransformAndSave(GetUniqueFilePath(FinalName), $"{Extension}.xslt");
+                Console.WriteLine("Max retry count reached. File could not be saved.");
             }
         }
     }

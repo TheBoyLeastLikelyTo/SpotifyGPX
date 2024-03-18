@@ -16,36 +16,36 @@ namespace SpotifyGPX
     /// </summary>
     public class Options
     {
-        private static bool IsMiniSpotify => false; // (true = "Account data", false = "Extended streaming history data")
+        private const bool IsMiniSpotify = false; // (true = "Account data", false = "Extended streaming history data")
 
-        public static string SpotifyTimeFormat => IsMiniSpotify ? DateTimeOnly : ISO8601UTC;
+        public const string SpotifyTimeFormat = IsMiniSpotify ? DateTimeOnly : ISO8601UTC;
 
         /// <summary>
         /// A time in HH:mm:ss format with no date or offset.
         /// </summary>
-        public static string TimeOnly => @"HH\:mm\:ss";
+        public const string TimeOnly = @"HH\:mm\:ss";
 
         /// <summary>
         /// A date in yyyy-MM-dd and time in HH:mm format with no offset.
         /// </summary>
-        public static string DateTimeOnly => @"yyyy-MM-dd HH\:mm";
+        public const string DateTimeOnly = @"yyyy-MM-dd HH\:mm";
 
         /// <summary>
         /// An ISO8601 time in UTC.
         /// DateTimeOffset must be converted to UTC before converting to string.
         /// </summary>
-        public static string ISO8601UTC => @"yyyy-MM-ddTHH\:mm\:ssZ";
+        public const string ISO8601UTC = @"yyyy-MM-ddTHH\:mm\:ssZ";
 
         /// <summary>
         /// An ISO8601 time including an offset.
         /// Can be any UTC offset.
         /// </summary>
-        public static string ISO8601Offset => @"yyyy-MM-dd HH\:mm\:ss zzz";
+        public const string ISO8601Offset = @"yyyy-MM-dd HH\:mm\:ss zzz";
 
         /// <summary>
         /// A duration of time in HH:mm:ss.fff format.
         /// </summary>
-        public static string TimeSpan => @"hh\:mm\:ss\.fff";
+        public const string TimeSpan = @"hh\:mm\:ss\.fff";
 
         public static JsonSerializerSettings JsonSettings => new()
         {
@@ -68,8 +68,8 @@ namespace SpotifyGPX
 
     public readonly partial struct SpotifyEntry
     {
-        private static bool InterpretAsStartTime => false; // Interpret the time played as the start time of the track (false = interpret as end time)
-        private static bool PreferEstimatedStartTime => true; // Estimate the start time of the track by subtracting the time played duration from the end time (assumes the user didn't pause playback)
+        private const bool InterpretAsStartTime = false; // Interpret the time played as the start time of the track (false = interpret as end time)
+        private const bool PreferEstimatedStartTime = true; // Estimate the start time of the track by subtracting the time played duration from the end time (assumes the user didn't pause playback)
     }
 
     public partial class PairingsHandler
@@ -79,7 +79,7 @@ namespace SpotifyGPX
 
     public partial class DupeHandler
     {
-        private static int MinimumMatchingCoords => 2; // Minimum number of matching coordinates to be considered a duplicate
+        private const int MinimumMatchingCoords = 2; // Minimum number of matching coordinates to be considered a duplicate
     }
 }
 
@@ -128,7 +128,7 @@ namespace SpotifyGPX.Input
     public partial interface ISongInput
     {
         private static TimeSpan MinimumPlaytime => new(0, 0, 0); // Minimum accepted song playback time (0,0,0 for all songs)
-        private static bool ExcludeSkipped => false; // Ignore songs skipped by the user, as defined by Spotify JSON (false for all songs)
+        private const bool ExcludeSkipped = false; // Ignore songs skipped by the user, as defined by Spotify JSON (false for all songs)
     }
 
     public partial interface IGpsInput
@@ -157,10 +157,10 @@ namespace SpotifyGPX.Input
     public partial class Gpx
     {
         private static XNamespace InputNs => "http://www.topografix.com/GPX/1/0";
-        private static string Track => "trk";
-        private static string TrackPoint => "trkpt";
-        private static string TimeFormat => $"yyyy-MM-ddTHH:mm:ss.fffzzz";
-        private static DateTimeStyles TimeStyle => DateTimeStyles.None;
+        private const string Track = "trk";
+        private const string TrackPoint = "trkpt";
+        private const string TimeFormat = $"yyyy-MM-ddTHH:mm:ss.fffzzz";
+        private const DateTimeStyles TimeStyle = DateTimeStyles.None;
     }
 
     public partial class Json
@@ -177,15 +177,15 @@ namespace SpotifyGPX.Input
     {
         private static XNamespace InputNs => "http://www.opengis.net/kml/2.2";
         private static XNamespace Gx => "http://www.google.com/kml/ext/2.2";
-        private static string TimeFormat => $"yyyy-MM-ddTHH:mm:ss.fffZ";
-        private static DateTimeStyles TimeStyle => DateTimeStyles.None;
+        private const string TimeFormat = $"yyyy-MM-ddTHH:mm:ss.fffZ";
+        private const DateTimeStyles TimeStyle = DateTimeStyles.None;
     }
 
     public partial class Xspf
     {
         private static XNamespace InputNs => "http://xspf.org/ns/0/";
-        private static string Track => "track";
-        private static DateTimeStyles TimeStyle => DateTimeStyles.AssumeUniversal;
+        private const string Track = "track";
+        private const DateTimeStyles TimeStyle = DateTimeStyles.AssumeUniversal;
     }
 }
 
@@ -193,8 +193,10 @@ namespace SpotifyGPX.Output
 {
     public partial class OutputHandler
     {
-        private static bool ReplaceFiles => true;
-        private static string AllTracksName => "All";
+        private const bool ReplaceFiles = true;
+        private const string AllTracksName = "All";
+        private const int MaxRetries = 3;
+        private const int RetryDelayMs = 10000;
 
         private static IFileOutput CreateFileOutput(Formats format, IEnumerable<SongPoint> pairs, string trackName)
         {
@@ -231,7 +233,7 @@ namespace SpotifyGPX.Output
 
     public partial class Csv
     {
-        private static string Delimiter => ",";
+        private const string Delimiter = ",";
         protected override SaveOptions OutputOptions => SaveOptions.None;
         protected override Encoding OutputEncoding => Encoding.UTF8;
     }
@@ -239,10 +241,10 @@ namespace SpotifyGPX.Output
     public partial class Gpx
     {
         private static XNamespace Namespace => "http://www.topografix.com/GPX/1/0";
-        private static string DocumentEncoding => "utf-8";
+        private const string DocumentEncoding = "utf-8";
         private static XNamespace Xsi => "http://www.w3.org/2001/XMLSchema-instance";
-        private static string Schema => "http://www.topografix.com/GPX/1/0 http://wwwtopografix.com/GPX/1/0/gpx.xsd";
-        private static string Waypoint => "wpt";
+        private const string Schema = "http://www.topografix.com/GPX/1/0 http://wwwtopografix.com/GPX/1/0/gpx.xsd";
+        private const string Waypoint = "wpt";
         protected override SaveOptions OutputOptions => SaveOptions.None;
         protected override Encoding OutputEncoding => Encoding.UTF8;
     }
@@ -266,7 +268,7 @@ namespace SpotifyGPX.Output
         private static XNamespace Namespace => "http://www.opengis.net/kml/2.2";
         private const string DocumentEncoding = "utf-8";
         private static XNamespace Gx => "http://www.google.com/kml/ext/2.2";
-        private static string Placemark => "Placemark";
+        private const string Placemark = "Placemark";
         protected override SaveOptions OutputOptions => SaveOptions.None;
         protected override Encoding OutputEncoding => Encoding.UTF8;
     }
@@ -279,15 +281,17 @@ namespace SpotifyGPX.Output
 
     public partial class Xlsx
     {
-
+        private const bool CreateTotalRow = true;
+        private const bool CreatePivots = true;
     }
 
     public partial class Xspf
     {
         private static XNamespace Namespace => "http://xspf.org/ns/0/";
-        private static string DocumentEncoding => "utf-8";
-        private static string Track => "track";
+        private const string DocumentEncoding = "utf-8";
+        private const string Track = "track";
         protected override SaveOptions OutputOptions => SaveOptions.None;
         protected override Encoding OutputEncoding => Encoding.UTF8;
     }
+
 }
