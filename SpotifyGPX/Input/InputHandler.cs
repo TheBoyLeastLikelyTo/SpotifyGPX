@@ -9,7 +9,7 @@ namespace SpotifyGPX.Input;
 /// <summary>
 /// Handle various input file formats for taking in song and GPS information.
 /// </summary>
-public class InputHandler
+public partial class InputHandler
 {
     private ISongInput SongInput { get; }
     private IGpsInput GpsInput { get; }
@@ -124,61 +124,6 @@ public class InputHandler
         {
             throw new Exception($"Unable to get pairs: this input format does not support pairs.");
         }
-    }
-
-    /// <summary>
-    /// Determines the appropriate import class for handling this song records file.
-    /// </summary>
-    /// <param name="path">The path to the song records file.</param>
-    /// <returns>An ISongInput interface allowing interfacing with the corresponding format.</returns>
-    /// <exception cref="Exception">The provided file doesn't have an import class associated with it.</exception>
-    private static ISongInput CreateSongInput(string path)
-    {
-        string extension = Path.GetExtension(path).ToLower();
-
-        return extension switch
-        {
-            ".json" => new Json(path),
-            ".jsonreport" => new JsonReport(path),
-            ".xspf" => new Xspf(path),
-            _ => throw new Exception($"Unsupported song file format: {extension}"),
-        };
-    }
-
-    /// <summary>
-    /// Determines the appropriate import class for handling this GPS journey file.
-    /// </summary>
-    /// <param name="path">The path to the GPS journey file.</param>
-    /// <returns>An IGpsInput interface allowing interfacing with the corresponding format.</returns>
-    /// <exception cref="Exception">The provided file doesn't have an import class associated with it.</exception>
-    private static IGpsInput CreateGpsInput(string path)
-    {
-        string extension = Path.GetExtension(path).ToLower();
-
-        return extension switch
-        {
-            ".gpx" => new Gpx(path),
-            ".kml" => new Kml(path),
-            ".jsonreport" => new JsonReport(path),
-            _ => throw new Exception($"Unsupported GPS file format: {extension}"),
-        };
-    }
-
-    /// <summary>
-    /// Determines the appropriate import class for handling this Song-Point pairings file.
-    /// </summary>
-    /// <param name="path">The path to the Song-Point pairings file.</param>
-    /// <returns>An IPairInput interface allowing interfacing with the corresponding format.</returns>
-    /// <exception cref="Exception">The provided file doesn't have an inport class associated with it.</exception>
-    private static IPairInput CreatePairInput(string path)
-    {
-        string extension = Path.GetExtension(path).ToLower();
-
-        return extension switch
-        {
-            ".jsonreport" => new JsonReport(path),
-            _ => throw new Exception($"Unsupported pairs file format: {extension}")
-        };
     }
 
     /// <summary>

@@ -2,7 +2,10 @@
 
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
@@ -82,10 +85,73 @@ namespace SpotifyGPX
 
 namespace SpotifyGPX.Input
 {
+    public partial class InputHandler
+    {
+        private static ISongInput CreateSongInput(string path)
+        {
+            string extension = Path.GetExtension(path).ToLower();
+
+            return extension switch
+            {
+                ".json" => new Json(path),
+                ".jsonreport" => new JsonReport(path),
+                ".xspf" => new Xspf(path),
+                _ => throw new Exception($"Unsupported song file format: {extension}"),
+            };
+        }
+
+        private static IGpsInput CreateGpsInput(string path)
+        {
+            string extension = Path.GetExtension(path).ToLower();
+
+            return extension switch
+            {
+                ".gpx" => new Gpx(path),
+                ".kml" => new Kml(path),
+                ".jsonreport" => new JsonReport(path),
+                _ => throw new Exception($"Unsupported GPS file format: {extension}"),
+            };
+        }
+
+        private static IPairInput CreatePairInput(string path)
+        {
+            string extension = Path.GetExtension(path).ToLower();
+
+            return extension switch
+            {
+                ".jsonreport" => new JsonReport(path),
+                _ => throw new Exception($"Unsupported pairs file format: {extension}")
+            };
+        }
+    }
+
     public partial interface ISongInput
     {
         private static TimeSpan MinimumPlaytime => new(0, 0, 0); // Minimum accepted song playback time (0,0,0 for all songs)
         private static bool ExcludeSkipped => false; // Ignore songs skipped by the user, as defined by Spotify JSON (false for all songs)
+    }
+
+    public partial interface IGpsInput
+    {
+        private static Dictionary<string, Func<IEnumerable<GPXTrack>, IEnumerable<GPXTrack>>> MultiTrackFilters => new()
+        {
+            { "A", allTracks => allTracks.Where(track => track.Track.Type == TrackType.GPX) },
+            { "B", allTracks => allTracks.Where(track => track.Track.Type != TrackType.Combined) },
+            { "C", allTracks => allTracks.Where(track => track.Track.Type == TrackType.Gap) },
+            { "D", allTracks => allTracks.Where(track => track.Track.Type != TrackType.Gap) },
+            { "E", allTracks => allTracks.Where(track => track.Track.Type != TrackType.GPX) },
+            { "F", allTracks => allTracks }
+        };
+
+        private static Dictionary<string, string> FilterDefinitions => new()
+        {
+            { "A", "GPS tracks" },
+            { "B", "GPS tracks, and the Gaps between them as tracks" },
+            { "C", "Gaps between GPS tracks as tracks" },
+            { "D", "GPS tracks and Combined track" },
+            { "E", "Gap tracks and Combined track" },
+            { "F", "GPS, Gap, and Combined tracks (everything)" }
+        };
     }
 
     public partial class Gpx
@@ -97,14 +163,6 @@ namespace SpotifyGPX.Input
         private static DateTimeStyles TimeStyle => DateTimeStyles.None;
     }
 
-    public partial class Kml
-    {
-        private static XNamespace InputNs => "http://www.opengis.net/kml/2.2";
-        private static XNamespace Gx => "http://www.google.com/kml/ext/2.2";
-        private static string TimeFormat => $"yyyy-MM-ddTHH:mm:ss.fffZ";
-        private static DateTimeStyles TimeStyle => DateTimeStyles.None;
-    }
-
     public partial class Json
     {
         private static JsonSerializerSettings JsonSettings => Options.JsonSettings;
@@ -113,6 +171,14 @@ namespace SpotifyGPX.Input
     public partial class JsonReport
     {
         private static JsonSerializerSettings JsonSettings => Options.JsonReportSettings;
+    }
+
+    public partial class Kml
+    {
+        private static XNamespace InputNs => "http://www.opengis.net/kml/2.2";
+        private static XNamespace Gx => "http://www.google.com/kml/ext/2.2";
+        private static string TimeFormat => $"yyyy-MM-ddTHH:mm:ss.fffZ";
+        private static DateTimeStyles TimeStyle => DateTimeStyles.None;
     }
 
     public partial class Xspf
@@ -129,20 +195,38 @@ namespace SpotifyGPX.Output
     {
         private static bool ReplaceFiles => true;
         private static string AllTracksName => "All";
-    }
 
-    public partial class JsonReport
-    {
-        protected override JsonSerializerSettings JsonSettings => Options.JsonReportSettings;
-        protected override SaveOptions OutputOptions => SaveOptions.None;
-        protected override Encoding OutputEncoding => Encoding.UTF8;
-    }
+        private static IFileOutput CreateFileOutput(Formats format, IEnumerable<SongPoint> pairs, string trackName)
+        {
+            return format switch
+            {
+                Formats.Csv => new Csv(pairs),
+                Formats.Gpx => new Gpx(pairs, trackName),
+                Formats.Json => new Json(pairs),
+                Formats.JsonReport => new JsonReport(pairs),
+                Formats.Kml => new Kml(pairs, trackName),
+                Formats.Txt => new Txt(pairs),
+                Formats.Xlsx => new Xlsx(pairs),
+                Formats.Xspf => new Xspf(pairs, trackName),
+                _ => throw new Exception($"Unsupported file export format: {format}")
+            };
+        }
 
-    public partial class Json
-    {
-        protected override JsonSerializerSettings JsonSettings => Options.JsonSettings;
-        protected override SaveOptions OutputOptions => SaveOptions.None;
-        protected override Encoding OutputEncoding => Encoding.UTF8;
+        private static bool AllowsMultiTrack(Formats format)
+        {
+            return format switch
+            {
+                Formats.Csv => false,
+                Formats.Gpx => false,
+                Formats.Json => false,
+                Formats.JsonReport => true,
+                Formats.Kml => false,
+                Formats.Txt => false,
+                Formats.Xlsx => true,
+                Formats.Xspf => false,
+                _ => throw new Exception($"Unsupported file export format: {format}")
+            };
+        }
     }
 
     public partial class Csv
@@ -159,6 +243,20 @@ namespace SpotifyGPX.Output
         private static XNamespace Xsi => "http://www.w3.org/2001/XMLSchema-instance";
         private static string Schema => "http://www.topografix.com/GPX/1/0 http://wwwtopografix.com/GPX/1/0/gpx.xsd";
         private static string Waypoint => "wpt";
+        protected override SaveOptions OutputOptions => SaveOptions.None;
+        protected override Encoding OutputEncoding => Encoding.UTF8;
+    }
+
+    public partial class Json
+    {
+        protected override JsonSerializerSettings JsonSettings => Options.JsonSettings;
+        protected override SaveOptions OutputOptions => SaveOptions.None;
+        protected override Encoding OutputEncoding => Encoding.UTF8;
+    }
+
+    public partial class JsonReport
+    {
+        protected override JsonSerializerSettings JsonSettings => Options.JsonReportSettings;
         protected override SaveOptions OutputOptions => SaveOptions.None;
         protected override Encoding OutputEncoding => Encoding.UTF8;
     }

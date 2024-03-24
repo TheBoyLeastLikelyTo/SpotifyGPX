@@ -9,17 +9,9 @@ using System.IO;
 namespace SpotifyGPX.Input;
 
 /// <summary>
-/// Unifies all JSON-based file import classes supporting deserialization of their contents.
-/// </summary>
-public interface IJsonDeserializer
-{
-    List<JObject> Deserialize();
-}
-
-/// <summary>
 /// Deserialize a JSON file to a list of JObject objects.
 /// </summary>
-public class JsonDeserializer : IJsonDeserializer
+public class JsonDeserializer
 {
     private string JsonPath { get; }
     private JsonSerializerSettings? SerializerSettings { get; }

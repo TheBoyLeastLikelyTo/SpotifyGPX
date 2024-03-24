@@ -35,7 +35,7 @@ public partial class Xspf : SongInputBase, IHashVerifier
     /// Parse the contents of the XSPF file to a list of songs.
     /// </summary>
     /// <returns>A list of SpotifyEntry objects, each representing a song record.</returns>
-    public List<SpotifyEntry> ParseSongs()
+    private List<SpotifyEntry> ParseSongs()
     {
         return Document.Descendants(InputNs + Track).Select((element, index) => new SpotifyEntry(
             index,

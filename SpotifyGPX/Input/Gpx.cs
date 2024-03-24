@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -24,18 +23,6 @@ public partial class Gpx : GpsInputBase
     public Gpx(string path)
     {
         Document = XDocument.Load(path);
-
-        if (SourceTrackCount == 0)
-        {
-            // If there are no tracks in the GPX, throw error
-            throw new Exception($"No track elements found in '{Path.GetFileName(path)}'!");
-        }
-
-        if (SourcePointCount == 0)
-        {
-            // If there are no points the GPX, throw error
-            throw new Exception($"No points found in '{Path.GetFileName(path)}'!");
-        }
 
         Tracks = ParseTracks();
     }

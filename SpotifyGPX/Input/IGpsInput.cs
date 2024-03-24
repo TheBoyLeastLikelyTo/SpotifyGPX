@@ -9,7 +9,7 @@ namespace SpotifyGPX.Input;
 /// <summary>
 /// Interfaces with GPS input classes, unifying all formats accepting GPS journeys.
 /// </summary>
-public interface IGpsInput
+public partial interface IGpsInput
 {
     /// <summary>
     /// Gets all tracks in the file.
@@ -46,10 +46,21 @@ public interface IGpsInput
     /// <returns>A list of GPXTrack objects based on user selection.</returns>
     private static List<GPXTrack> HandleMultipleTracks(List<GPXTrack> allTracks)
     {
-        // Display all the tracks to the user
-        DisplayTrackOptions(allTracks);
+        int selectedTrackIndex; // Holds the user track selection index        
 
-        int selectedTrackIndex; // Holds the user track selection index
+        Console.WriteLine("[INP] Multiple GPX tracks found:");
+
+        foreach (GPXTrack track in allTracks)
+        {
+            Console.WriteLine($"[INP] Index: {allTracks.IndexOf(track)} {track.ToString()}");
+        }
+
+        foreach (var filter in FilterDefinitions)
+        {
+            Console.WriteLine($"[INP] [{filter.Key}] {filter.Value}");
+        }
+
+        Console.Write("[INP] Please enter the index of the track you want to use: ");
 
         // Loop the user input request until a valid option is selected
         while (true)
@@ -59,21 +70,12 @@ public interface IGpsInput
             {
                 break; // Return this selection below
             }
-            switch (input)
+
+            if (MultiTrackFilters.TryGetValue(input, out var FilterFunc))
             {
-                case "A":
-                    return allTracks.Where(track => track.Track.Type == TrackType.GPX).ToList(); // GPX only
-                case "B":
-                    return allTracks.Where(track => track.Track.Type != TrackType.Combined).ToList(); // GPX and gap tracks
-                case "C":
-                    return allTracks.Where(track => track.Track.Type == TrackType.Gap).ToList(); // Gaps only
-                case "D":
-                    return allTracks.Where(track => track.Track.Type != TrackType.Gap).ToList(); // GPX and combined
-                case "E":
-                    return allTracks.Where(track => track.Track.Type != TrackType.GPX).ToList(); // Gaps and combined
-                case "F":
-                    return allTracks; // Combined, GPX, and gaps
+                return FilterFunc(allTracks).ToList();
             }
+
             Console.WriteLine("Invalid input. Please enter a valid track number.");
         }
 
@@ -83,28 +85,6 @@ public interface IGpsInput
             allTracks[selectedTrackIndex]
         };
         return selectedTracks;
-    }
-
-    /// <summary>
-    /// Write each track to the console, and display user options for intake selection.
-    /// </summary>
-    /// <param name="allTracks">The entire list of tracks.</param>
-    private static void DisplayTrackOptions(List<GPXTrack> allTracks)
-    {
-        Console.WriteLine("[INP] Multiple GPX tracks found:");
-
-        foreach (GPXTrack track in allTracks)
-        {
-            Console.WriteLine($"[INP] Index: {allTracks.IndexOf(track)} {track.ToString()}");
-        }
-
-        Console.WriteLine("[INP] [A] GPX tracks");
-        Console.WriteLine("[INP] [B] GPX tracks, and gaps between them");
-        Console.WriteLine("[INP] [C] Gaps between GPX tracks only");
-        Console.WriteLine("[INP] [D] GPX tracks and Combined track");
-        Console.WriteLine("[INP] [E] Gap tracks and Combined track");
-        Console.WriteLine("[INP] [F] GPX, Gap, and Combined tracks (everything)");
-        Console.Write("[INP] Please enter the index of the track you want to use: ");
     }
 
     /// <summary>

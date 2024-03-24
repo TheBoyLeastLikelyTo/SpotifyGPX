@@ -10,7 +10,7 @@ namespace SpotifyGPX.Input;
 /// <summary>
 /// Provides instructions for parsing song playback data and GPS data from the JsonReport format.
 /// </summary>
-public partial class JsonReport : PairInputBase, IJsonDeserializer, IHashVerifier
+public partial class JsonReport : PairInputBase, IHashVerifier
 {
     private JsonDeserializer JsonDeserializer { get; } // Deserializer for handling Json deserialization for hashing
     private List<JObject> JsonObjects { get; } // Everything in the JsonReport file
@@ -24,15 +24,10 @@ public partial class JsonReport : PairInputBase, IJsonDeserializer, IHashVerifie
     public JsonReport(string path)
     {
         JsonDeserializer = new JsonDeserializer(path, JsonSettings);
-        JsonObjects = Deserialize();
+        JsonObjects = JsonDeserializer.Deserialize();
         JsonTracksOnly = JsonObjects.Skip(1).ToList();
         List<SongPoint> pairs = GetFromJObject();
         AllPairs = pairs;
-    }
-
-    public List<JObject> Deserialize()
-    {
-        return JsonDeserializer.Deserialize();
     }
 
     /// <summary>
@@ -40,7 +35,7 @@ public partial class JsonReport : PairInputBase, IJsonDeserializer, IHashVerifie
     /// </summary>
     /// <returns>A list of tracks and a list of songs representing the included data.</returns>
     /// <exception cref="Exception"></exception>
-    public List<SongPoint> GetFromJObject()
+    private List<SongPoint> GetFromJObject()
     {
         int alreadyParsed = 0; // The number of points already parsed
 

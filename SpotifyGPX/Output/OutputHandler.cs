@@ -101,51 +101,6 @@ public partial class OutputHandler
     }
 
     /// <summary>
-    /// Determines the appropriate output class for handling pairs in the given format.
-    /// </summary>
-    /// <param name="format">The desired export format.</param>
-    /// <param name="pairs">The pairs to create in the specified file format.</param>
-    /// <returns>An IFileOutput interface allowing interfacing with the corresponding format.</returns>
-    /// <exception cref="Exception">The provided file doesn't have an export class associated with it.</exception>
-    private static IFileOutput CreateFileOutput(Formats format, IEnumerable<SongPoint> pairs, string trackName)
-    {
-        return format switch
-        {
-            Formats.Csv => new Csv(pairs),
-            Formats.Gpx => new Gpx(pairs, trackName),
-            Formats.Json => new Json(pairs),
-            Formats.JsonReport => new JsonReport(pairs),
-            Formats.Kml => new Kml(pairs, trackName),
-            Formats.Txt => new Txt(pairs),
-            Formats.Xlsx => new Xlsx(pairs),
-            Formats.Xspf => new Xspf(pairs, trackName),
-            _ => throw new Exception($"Unsupported file export format: {format}")
-        };
-    }
-
-    /// <summary>
-    /// Determines whether the given format supports multiple tracks (distinguishing between them).
-    /// </summary>
-    /// <param name="format">The format.</param>
-    /// <returns>True, if the format supports multiple tracks. If it doesn't, false.</returns>
-    /// <exception cref="Exception"></exception>
-    private static bool AllowsMultiTrack(Formats format)
-    {
-        return format switch
-        {
-            Formats.Csv => false,
-            Formats.Gpx => false,
-            Formats.Json => false,
-            Formats.JsonReport => true,
-            Formats.Kml => false,
-            Formats.Txt => false,
-            Formats.Xlsx => true,
-            Formats.Xspf => false,
-            _ => throw new Exception($"Unsupported file export format: {format}")
-        };
-    }
-
-    /// <summary>
     /// Generate a unique file path given a provided path.
     /// </summary>
     /// <param name="path">A path that will be checked for an existing file.</param>
