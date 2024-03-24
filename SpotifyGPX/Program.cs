@@ -173,16 +173,17 @@ public class ArgumentParser
 
     public static void PrintHelp()
     {
-        Console.WriteLine("Usage: SpotifyGPX [--spotify <spotify> --gps <gps>] [--pairs <pairs>] [-c] [-n] [-h] [-j] [-p] [-t] [-r] [-pp [-pa]] [-s] [-h]");
+        Console.WriteLine("Usage: SpotifyGPX [--spotify <spotify> --gps <gps>] [--pairs <pairs>] [-n] [-c] [-j] [-p] [-t] [-r] [-e] [-x] [-pp [-pa]] [-s] [-h]");
         Console.WriteLine("--spotify <spotify> --gps <gps> - Path to a Spotify playback history and GPS journey file");
         Console.WriteLine("--pairs <pairs> - Path to a pairs file");
         Console.WriteLine("-n - Do not export a GPX from the calculated points");
-        Console.WriteLine("-c - Export a csv table of all the pairs");
-        Console.WriteLine("-w - Export an HTML webpage visualizing the list of pairs");
+        Console.WriteLine("-c - Export a CSV table of all the pairs");
         Console.WriteLine("-j - Save off the relevant part of the Spotify json");
-        Console.WriteLine("-p - Export a xspf playlist of the songs");
-        Console.WriteLine("-t - Export a txt list of pairs");
-        Console.WriteLine("-r - Export a jsonreport of all the data used to compile the resulting pairings");
+        Console.WriteLine("-p - Export a XSPF playlist of the songs");
+        Console.WriteLine("-t - Export a plain text list of pairs");
+        Console.WriteLine("-r - Export a JsonReport of all the data used to compile the resulting pairings");
+        Console.WriteLine("-e - Export an Excel workbook of all pairings, grouped into worksheets for each track");
+        Console.WriteLine("-x - Export an XML conversion of each file exported (combine this with other format export flags)");
         Console.WriteLine("-pp - Predict new positions for duplicate points (use with -pa for automatic prediction of all duplicate positions)");
         Console.WriteLine("-s - Do not print out each newly created Song-Point pairing upon creation");
         Console.WriteLine("-h - Print the help instructions");
