@@ -10,11 +10,11 @@ namespace SpotifyGPX.Input;
 /// <summary>
 /// Provides instructions for parsing song playback data from the JSON format.
 /// </summary>
-public partial class Json : ISongInput, IJsonDeserializer
+public partial class Json : SongInputBase, IJsonDeserializer
 {
     private JsonDeserializer JsonDeserializer { get; }
     private List<JObject> AllEntries { get; }
-    private List<SpotifyEntry> AllSongs { get; } // All songs parsed from the JSON
+    protected override List<SpotifyEntry> AllSongs { get; } // All songs parsed from the JSON
 
     /// <summary>
     /// Creates a new input handler for handling files in the JSON format.
@@ -63,21 +63,7 @@ public partial class Json : ISongInput, IJsonDeserializer
     }
 
     /// <summary>
-    /// Gets all the songs, as a list, from the JSON file.
-    /// </summary>
-    /// <returns>A list of all the SpotifyEntries in the JSON.</returns>
-    public List<SpotifyEntry> GetAllSongs()
-    {
-        return AllSongs;
-    }
-
-    /// <summary>
     /// The total number of songs in the JSON file.
     /// </summary>
-    public int SourceSongCount => AllEntries.Count;
-
-    /// <summary>
-    /// The total number of songs parsed to SpotifyEntry objects from the JSON file.
-    /// </summary>
-    public int ParsedSongCount => AllSongs.Count;
+    public override int SourceSongCount => AllEntries.Count;
 }

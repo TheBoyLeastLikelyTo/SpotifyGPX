@@ -8,10 +8,10 @@ using System.Xml.Linq;
 
 namespace SpotifyGPX.Input;
 
-public partial class Xspf : ISongInput, IHashVerifier
+public partial class Xspf : SongInputBase, IHashVerifier
 {
     private XDocument Document { get; }
-    private List<SpotifyEntry> AllSongs { get; }
+    protected override List<SpotifyEntry> AllSongs { get; }
 
     /// <summary>
     /// Creates a new input handler for handling files in the XSPF format.
@@ -64,23 +64,9 @@ public partial class Xspf : ISongInput, IHashVerifier
     }
 
     /// <summary>
-    /// Get all the songs from the XSPF file.
-    /// </summary>
-    /// <returns>A list of SpotifyEntry objects representing all of the song records in the XSPF.</returns>
-    public List<SpotifyEntry> GetAllSongs()
-    {
-        return AllSongs;
-    }
-
-    /// <summary>
     /// The total number of songs in the XSPF file.
     /// </summary>
-    public int SourceSongCount => Document.Descendants(InputNs + Track).Count();
-
-    /// <summary>
-    /// The total number of songs parsed to SpotifyEntry objects from the XSPF file.
-    /// </summary>
-    public int ParsedSongCount => AllSongs.Count;
+    public override int SourceSongCount => Document.Descendants(InputNs + Track).Count();
 
     /// <summary>
     /// Verifies the hash included in the file with the contents of the file.

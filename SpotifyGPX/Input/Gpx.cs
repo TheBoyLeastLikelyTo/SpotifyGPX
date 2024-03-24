@@ -11,10 +11,10 @@ namespace SpotifyGPX.Input;
 /// <summary>
 /// Provides instructions for parsing GPS data from the GPX format.
 /// </summary>
-public partial class Gpx : IGpsInput
+public partial class Gpx : GpsInputBase
 {
     private XDocument Document { get; } // Entire input GPX document
-    private List<GPXTrack> Tracks { get; } // Parsed tracks from GPX document
+    protected override List<GPXTrack> Tracks { get; } // Parsed tracks from GPX document
 
     /// <summary>
     /// Creates a new input handler for handling files in the GPX format.
@@ -43,31 +43,12 @@ public partial class Gpx : IGpsInput
     /// <summary>
     /// The total number of track elements in this GPX file.
     /// </summary>
-    public int SourceTrackCount => Document.Descendants(InputNs + Track).Count();
+    public override int SourceTrackCount => Document.Descendants(InputNs + Track).Count();
 
     /// <summary>
     /// The total number of point elements in this GPX file.
     /// </summary>
-    public int SourcePointCount => Document.Descendants(InputNs + TrackPoint).Count();
-
-    /// <summary>
-    /// The total number of tracks parsed from the GPX file to GPXTrack objects.
-    /// </summary>
-    public int ParsedTrackCount => Tracks.Count;
-
-    /// <summary>
-    /// The total number of points parsed from the GPX file to GPXPoint objects.
-    /// </summary>
-    public int ParsedPointCount => Tracks.Select(track => track.Points.Count).Sum();
-
-    /// <summary>
-    /// Gets all the tracks in this GPX file. 
-    /// </summary>
-    /// <returns>A list of GPXTrack objects.</returns>
-    public List<GPXTrack> GetAllTracks()
-    {
-        return Tracks;
-    }
+    public override int SourcePointCount => Document.Descendants(InputNs + TrackPoint).Count();
 
     /// <summary>
     /// Parses this GPX document into a readable list of tracks.
