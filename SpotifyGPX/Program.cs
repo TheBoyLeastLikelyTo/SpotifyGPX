@@ -45,6 +45,7 @@ class Program
         bool exportPlist = flags.Contains("p");
         bool exportTxt = flags.Contains("t");
         bool exportJsonReport = flags.Contains("r");
+        bool exportKml = flags.Contains("k");
         bool exportExcel = flags.Contains("e");
         bool pointPredict = flags.Contains("pp");
         bool autoPredict = flags.Contains("pa");
@@ -106,26 +107,31 @@ class Program
 
         try
         {
-            if (!noGpxExport)
-                pairedEntries.Save(Formats.Gpx, Path.GetFileNameWithoutExtension(prefix), transform);
+            string startingPrefix = Path.GetFileNameWithoutExtension(prefix);
 
             if (exportCsv)
-                pairedEntries.Save(Formats.Csv, Path.GetFileNameWithoutExtension(prefix), transform);
+                pairedEntries.Save(Formats.Csv, startingPrefix, transform);
+
+            if (!noGpxExport)
+                pairedEntries.Save(Formats.Gpx, startingPrefix, transform);
 
             if (exportJson)
-                pairedEntries.Save(Formats.Json, Path.GetFileNameWithoutExtension(prefix), transform);
-
-            if (exportPlist)
-                pairedEntries.Save(Formats.Xspf, Path.GetFileNameWithoutExtension(prefix), transform);
-
-            if (exportExcel)
-                pairedEntries.Save(Formats.Xlsx, Path.GetFileNameWithoutExtension(prefix), transform);
-
-            if (exportTxt)
-                pairedEntries.Save(Formats.Txt, Path.GetFileNameWithoutExtension(prefix), transform);
+                pairedEntries.Save(Formats.Json, startingPrefix, transform);
 
             if (exportJsonReport)
-                pairedEntries.Save(Formats.JsonReport, Path.GetFileNameWithoutExtension(prefix), transform);
+                pairedEntries.Save(Formats.JsonReport, startingPrefix, transform);
+
+            if (exportKml)
+                pairedEntries.Save(Formats.Kml, startingPrefix, transform);
+
+            if (exportTxt)
+                pairedEntries.Save(Formats.Txt, startingPrefix, transform);
+
+            if (exportExcel)
+                pairedEntries.Save(Formats.Xlsx, startingPrefix, transform);
+
+            if (exportPlist)
+                pairedEntries.Save(Formats.Xspf, startingPrefix, transform);
         }
         catch (Exception ex)
         {

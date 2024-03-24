@@ -23,12 +23,17 @@ public enum Formats
     Json,
 
     /// <summary>
-    /// A .jsonreport file containing all pairing and track data.
+    /// A JsonReport file containing all pairing and track data.
     /// </summary>
     JsonReport,
 
     /// <summary>
-    /// A plain text file containing a string per pair.
+    /// A KML file containing song-point pairs as placemarks.
+    /// </summary>
+    Kml,
+
+    /// <summary>
+    /// A plain text (TXT) file containing a string per pair.
     /// </summary>
     Txt,
 

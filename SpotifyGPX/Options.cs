@@ -97,6 +97,14 @@ namespace SpotifyGPX.Input
         private static DateTimeStyles TimeStyle => DateTimeStyles.None;
     }
 
+    public partial class Kml
+    {
+        private static XNamespace InputNs => "http://www.opengis.net/kml/2.2";
+        private static XNamespace Gx => "http://www.google.com/kml/ext/2.2";
+        private static string TimeFormat => $"yyyy-MM-ddTHH:mm:ss.fffZ";
+        private static DateTimeStyles TimeStyle => DateTimeStyles.None;
+    }
+
     public partial class Json
     {
         private static JsonSerializerSettings JsonSettings => Options.JsonSettings;
@@ -151,6 +159,16 @@ namespace SpotifyGPX.Output
         private static XNamespace Xsi => "http://www.w3.org/2001/XMLSchema-instance";
         private static string Schema => "http://www.topografix.com/GPX/1/0 http://wwwtopografix.com/GPX/1/0/gpx.xsd";
         private static string Waypoint => "wpt";
+        protected override SaveOptions OutputOptions => SaveOptions.None;
+        protected override Encoding OutputEncoding => Encoding.UTF8;
+    }
+
+    public partial class Kml
+    {
+        private static XNamespace Namespace => "http://www.opengis.net/kml/2.2";
+        private const string DocumentEncoding = "utf-8";
+        private static XNamespace Gx => "http://www.google.com/kml/ext/2.2";
+        private static string Placemark => "Placemark";
         protected override SaveOptions OutputOptions => SaveOptions.None;
         protected override Encoding OutputEncoding => Encoding.UTF8;
     }

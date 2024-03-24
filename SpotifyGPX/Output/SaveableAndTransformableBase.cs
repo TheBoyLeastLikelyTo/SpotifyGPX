@@ -118,7 +118,7 @@ public abstract class TxtSaveable : SaveableAndTransformableBase<string?[]>
 }
 
 /// <summary>
-/// Provides instructions for serializing an array of bytes
+/// Provides instructions for serializing an array of bytes.
 /// </summary>
 public abstract class ByteSaveable : SaveableBase<byte[]>
 {

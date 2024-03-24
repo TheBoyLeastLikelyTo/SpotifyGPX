@@ -158,6 +158,7 @@ public class InputHandler
         return extension switch
         {
             ".gpx" => new Gpx(path),
+            ".kml" => new Kml(path),
             ".jsonreport" => new JsonReport(path),
             _ => throw new Exception($"Unsupported GPS file format: {extension}"),
         };
