@@ -6,24 +6,12 @@ using System.Linq;
 
 namespace SpotifyGPX.Output;
 
-/// <summary>
-/// Provides instructions for exporting pairing data to the TXT format.
-/// </summary>
 public partial class Txt : TxtSaveable
 {
     protected override string?[] Document { get; }
 
-    /// <summary>
-    /// Creates a new output handler for handling files in the TXT format.
-    /// </summary>
-    /// <param name="pairs">A list of pairs to be exported.</param>
     public Txt(IEnumerable<SongPoint> pairs) => Document = GetDocument(pairs);
 
-    /// <summary>
-    /// Creates an array of strings based on a selected variable in each pair.
-    /// </summary>
-    /// <param name="Pairs">A list of pairs.</param>
-    /// <returns>An array of strings, each string containing a single pair.</returns>
     private static string?[] GetDocument(IEnumerable<SongPoint> Pairs)
     {
         // Below are some examples of arrays
@@ -66,8 +54,5 @@ public partial class Txt : TxtSaveable
         return pairs.Select(selector).ToArray();
     }
 
-    /// <summary>
-    /// The number of pairs within this XSPF file.
-    /// </summary>
-    public override int Count => Document.Length; // Number of lines
+    public override int Count => Document.Length;
 }

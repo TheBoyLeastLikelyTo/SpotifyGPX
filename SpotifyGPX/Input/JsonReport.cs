@@ -7,20 +7,13 @@ using System.Linq;
 
 namespace SpotifyGPX.Input;
 
-/// <summary>
-/// Provides instructions for parsing song playback data and GPS data from the JsonReport format.
-/// </summary>
 public partial class JsonReport : PairInputBase, IHashVerifier
 {
-    private JsonDeserializer JsonDeserializer { get; } // Deserializer for handling Json deserialization for hashing
-    private List<JObject> JsonObjects { get; } // Everything in the JsonReport file
-    private List<JObject> JsonTracksOnly { get; } // Only the tracks portion of the JsonReport file (excluding header, hash)
-    protected override List<SongPoint> AllPairs { get; } // Pairs parsed from the JsonTracksOnly portion of the file
+    private JsonDeserializer JsonDeserializer { get; }
+    private List<JObject> JsonObjects { get; }
+    private List<JObject> JsonTracksOnly { get; }
+    protected override List<SongPoint> AllPairs { get; }
 
-    /// <summary>
-    /// Creates a JsonReport importer that allows job creation from existing job reports.
-    /// </summary>
-    /// <param name="path">The path to a JsonReport file.</param>
     public JsonReport(string path)
     {
         JsonDeserializer = new JsonDeserializer(path, JsonSettings);
@@ -30,11 +23,6 @@ public partial class JsonReport : PairInputBase, IHashVerifier
         AllPairs = pairs;
     }
 
-    /// <summary>
-    /// Parses a JsonReport to a list of tracks and songs.
-    /// </summary>
-    /// <returns>A list of tracks and a list of songs representing the included data.</returns>
-    /// <exception cref="Exception"></exception>
     private List<SongPoint> GetFromJObject()
     {
         int alreadyParsed = 0; // The number of points already parsed
@@ -98,30 +86,14 @@ public partial class JsonReport : PairInputBase, IHashVerifier
         throw new Exception($"Track {trackIndex} in JsonReport expected to have {expectedCount} pairs, but had {indexes.Count}");
     }
 
-    /// <summary>
-    /// The total number of songs in the JsonReport file.
-    /// </summary>
     public override int SourceSongCount => JsonTracksOnly.Select(JObject => JObject.Value<int>("Count")).Sum();
 
-    /// <summary>
-    /// The total number of points in the source JsonReport file
-    /// </summary>
     public override int SourcePointCount => JsonTracksOnly.Select(JObject => JObject.Value<int>("Count")).Sum();
 
-    /// <summary>
-    /// The total number of tracks in the source JsonReport file.
-    /// </summary>
     public override int SourceTrackCount => JsonTracksOnly.Count;
 
-    /// <summary>
-    /// The total number of pairs in the source JsonReport file.
-    /// </summary>
     public override int SourcePairCount => JsonTracksOnly.Select(JObject => JObject.Value<int>("Count")).Sum();
 
-    /// <summary>
-    /// Verifies the hash included in the file with the contents of the file.
-    /// </summary>
-    /// <returns>True, if the hashes match. Otherwise, false.</returns>
     public bool VerifyHash()
     {
         JsonHashProvider<IEnumerable<JObject>> hasher = new();

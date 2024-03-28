@@ -19,6 +19,9 @@ namespace SpotifyGPX.Output;
 /// <typeparam name="T">The source format type</typeparam>
 public abstract class SaveableBase<T> : IFileOutput
 {
+    /// <summary>
+    /// The document in the associated format that will be serialized and saved to the disk.
+    /// </summary>
     protected abstract T Document { get; }
     public abstract int Count { get; }
 
@@ -28,6 +31,10 @@ public abstract class SaveableBase<T> : IFileOutput
         File.WriteAllBytes(path, doc);
     }
 
+    /// <summary>
+    /// Converts the format document to bytes.
+    /// </summary>
+    /// <returns>This document, as a byte array.</returns>
     protected abstract byte[] ConvertToBytes();
 }
 
@@ -48,6 +55,10 @@ public abstract class SaveableAndTransformableBase<T> : SaveableBase<T>, ITransf
         File.WriteAllText(outputPath, doc, transformation.TargetEncoding ?? OutputEncoding);
     }
 
+    /// <summary>
+    /// Converts the format document to XML.
+    /// </summary>
+    /// <returns>This document, as an XML document.</returns>
     protected abstract XDocument TransformToXml();
 }
 

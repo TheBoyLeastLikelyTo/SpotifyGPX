@@ -13,11 +13,6 @@ public partial class Xspf : SongInputBase, IHashVerifier
     private XDocument Document { get; }
     protected override List<SpotifyEntry> AllSongs { get; }
 
-    /// <summary>
-    /// Creates a new input handler for handling files in the XSPF format.
-    /// </summary>
-    /// <param name="path">The path to the XSPF file.</param>
-    /// <exception cref="Exception">The file contains no valid elements.</exception>
     public Xspf(string path)
     {
         Document = XDocument.Load(path);
@@ -31,10 +26,6 @@ public partial class Xspf : SongInputBase, IHashVerifier
         AllSongs = ParseSongs();
     }
 
-    /// <summary>
-    /// Parse the contents of the XSPF file to a list of songs.
-    /// </summary>
-    /// <returns>A list of SpotifyEntry objects, each representing a song record.</returns>
     private List<SpotifyEntry> ParseSongs()
     {
         return Document.Descendants(InputNs + Track).Select((element, index) => new SpotifyEntry(
@@ -63,15 +54,8 @@ public partial class Xspf : SongInputBase, IHashVerifier
             ).ToList();
     }
 
-    /// <summary>
-    /// The total number of songs in the XSPF file.
-    /// </summary>
     public override int SourceSongCount => Document.Descendants(InputNs + Track).Count();
 
-    /// <summary>
-    /// Verifies the hash included in the file with the contents of the file.
-    /// </summary>
-    /// <returns>True, if the hashes match. Otherwise, false.</returns>
     public bool VerifyHash()
     {
         XmlHashProvider hasher = new();

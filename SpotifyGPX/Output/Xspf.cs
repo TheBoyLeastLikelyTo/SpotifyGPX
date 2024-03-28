@@ -7,26 +7,12 @@ using System.Xml.Linq;
 
 namespace SpotifyGPX.Output;
 
-/// <summary>
-/// Provides instructions for exporting pairing data to the XSPF format.
-/// </summary>
 public partial class Xspf : XmlSaveable
 {
     protected override XDocument Document { get; }
 
-    /// <summary>
-    /// Creates a new output handler for handling files in the XSPF format.
-    /// </summary>
-    /// <param name="pairs">A list of pairs to be exported.</param>
-    /// <param name="trackName">The name of the track representing the pairs.</param>
     public Xspf(IEnumerable<SongPoint> pairs, string trackName) => Document = GetDocument(pairs, trackName);
 
-    /// <summary>
-    /// Creates an XDocument containing each song of each pair, in XSPF format.
-    /// </summary>
-    /// <param name="pairs">A list of pairs.</param>
-    /// <param name="trackName">The name of the track representing the pairs.</param>
-    /// <returns>An XDocument containing the contents of the created XSPF.</returns>
     private static XDocument GetDocument(IEnumerable<SongPoint> pairs, string trackName)
     {
         var xspfPairs = pairs.Select(pair =>
@@ -58,8 +44,5 @@ public partial class Xspf : XmlSaveable
         );
     }
 
-    /// <summary>
-    /// The number of tracks (songs) within this XSPF file.
-    /// </summary>
     public override int Count => Document.Descendants(Namespace + Track).Count(); // Number of track elements
 }

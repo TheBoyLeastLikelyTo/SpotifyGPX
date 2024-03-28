@@ -7,26 +7,12 @@ using System.Xml.Linq;
 
 namespace SpotifyGPX.Output;
 
-/// <summary>
-/// Provides instructions for exporting pairing data to the GPX format.
-/// </summary>
 public partial class Gpx : XmlSaveable
 {
     protected override XDocument Document { get; }
 
-    /// <summary>
-    /// Creates a new output handler for handling files in the GPX format.
-    /// </summary>
-    /// <param name="pairs">A list of pairs to be exported.</param>
-    /// <param name="trackName">The name of the track representing the pairs.</param>
     public Gpx(IEnumerable<SongPoint> pairs, string trackName) => Document = GetDocument(pairs, trackName);
 
-    /// <summary>
-    /// Creates an XDocument containing each pair, in GPX format.
-    /// </summary>
-    /// <param name="pairs">A list of pairs.</param>
-    /// <param name="trackName">The name of the track representing the pairs.</param>
-    /// <returns>An XDocument containing the contents of the created GPX.</returns>
     private static XDocument GetDocument(IEnumerable<SongPoint> pairs, string trackName)
     {
         var gpxPairs = pairs.Select(pair =>
@@ -58,8 +44,5 @@ public partial class Gpx : XmlSaveable
         );
     }
 
-    /// <summary>
-    /// The number of waypoints (pairs) within this GPX file.
-    /// </summary>
-    public override int Count => Document.Descendants(Namespace + Waypoint).Count(); // Number of point elements
+    public override int Count => Document.Descendants(Namespace + Waypoint).Count();
 }

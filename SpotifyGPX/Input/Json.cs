@@ -7,19 +7,12 @@ using System.Linq;
 
 namespace SpotifyGPX.Input;
 
-/// <summary>
-/// Provides instructions for parsing song playback data from the JSON format.
-/// </summary>
 public partial class Json : SongInputBase
 {
     private JsonDeserializer JsonDeserializer { get; }
     private List<JObject> AllEntries { get; }
-    protected override List<SpotifyEntry> AllSongs { get; } // All songs parsed from the JSON
+    protected override List<SpotifyEntry> AllSongs { get; }
 
-    /// <summary>
-    /// Creates a new input handler for handling files in the JSON format.
-    /// </summary>
-    /// <param name="path">The path of the JSON file.</param>
     public Json(string path)
     {
         JsonDeserializer = new JsonDeserializer(path, JsonSettings);
@@ -57,8 +50,5 @@ public partial class Json : SongInputBase
             ).ToList();
     }
 
-    /// <summary>
-    /// The total number of songs in the JSON file.
-    /// </summary>
     public override int SourceSongCount => AllEntries.Count;
 }

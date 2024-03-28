@@ -6,24 +6,12 @@ using System.Linq;
 
 namespace SpotifyGPX.Output;
 
-/// <summary>
-/// Provides instructions for exporting pairing data to the JsonReport format.
-/// </summary>
 public partial class JsonReport : JsonSaveable
 {
     protected override List<JObject> Document { get; }
 
-    /// <summary>
-    /// Creates a new output handler for handling files in the JsonReport format.
-    /// </summary>
-    /// <param name="pairs">A list of pairs to be exported.</param>
     public JsonReport(IEnumerable<SongPoint> pairs) => Document = GetDocument(pairs);
 
-    /// <summary>
-    /// Creates a JsonReport document (a list of JObjects) representing tracks and their pairs.
-    /// </summary>
-    /// <param name="Pairs">A list of pairs.</param>
-    /// <returns>A list of JObjects, each representing a track containing pairs.</returns>
     private static List<JObject> GetDocument(IEnumerable<SongPoint> Pairs)
     {
         List<JObject> objects = Pairs
@@ -53,9 +41,6 @@ public partial class JsonReport : JsonSaveable
         return objects;
     }
 
-    /// <summary>
-    /// The number of pairs within this JsonReport file, regardless of track.
-    /// </summary>
     public override int Count
     {
         get
