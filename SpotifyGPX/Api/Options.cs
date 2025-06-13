@@ -22,7 +22,7 @@ namespace SpotifyGPX.Api.SpotifyAPI
 {
     public partial class SpotifyEntryMatcher
     {
-        private static string CLIENT_ID => "";
-        private static string CLIENT_SECRET => "";
+        private static string CLIENT_ID => "YOUR_CLIENT_ID";
+        private static string CLIENT_SECRET => "YOUR_CLIENT_SECRET";
     }
 }
